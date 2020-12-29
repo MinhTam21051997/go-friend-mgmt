@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="9871398e-da51-43fe-a9bc-9adfa00b7bd2" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go File" />
+      </list>
+    </option>
+  </component>
+  <component name="GOROOT" path="C:\Go" />
+  <component name="GoDepProject">
+    <integration-enabled>true</integration-enabled>
+  </component>
+  <component name="ProjectId" id="1krtc8OwkaQB08szDGpUQq5NDT6" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultGoTemplateProperty" value="Go File" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="configurable.Global.GOPATH.is.expanded" value="true" />
+    <property name="configurable.Module.GOPATH.is.expanded" value="false" />
+    <property name="configurable.Project.GOPATH.is.expanded" value="true" />
+    <property name="go.import.settings.migrated" value="true" />
+    <property name="go.sdk.automatically.set" value="true" />
+    <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
+    <property name="go.vendoring.notification.had.been.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/cmd/api/router/rest_api" />
+    <property name="settings.editor.selected.configurable" value="go.vgo" />
+  </component>
+  <component name="RunManager">
+    <configuration name="go build go-friend-mgmt/cmd/api/router/rest_api" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="go-friend-mgmt" />
+      <working_directory value="$PROJECT_DIR$/cmd/api/router/rest_api" />
+      <kind value="DIRECTORY" />
+      <filePath value="$PROJECT_DIR$/cmd/api/router/rest_api/user.go" />
+      <package value="go-friend-mgmt" />
+      <directory value="$PROJECT_DIR$/cmd/api/router/rest_api" />
+      <option name="run" value="false" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Build.go build go-friend-mgmt/cmd/api/router/rest_api" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9871398e-da51-43fe-a9bc-9adfa00b7bd2" name="Default Changelist" comment="" />
+      <created>1606470615074</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1606470615074</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VgoProject">
+    <integration-enabled>true</integration-enabled>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="2032" y="353" key="#Go_Modules" timestamp="1606471398165">
+      <screen x="1280" y="0" width="1920" height="1040" />
+    </state>
+    <state x="2032" y="353" key="#Go_Modules/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1606471398165" />
+    <state x="1694" y="175" width="1092" height="738" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1607420190019">
+      <screen x="1280" y="0" width="1920" height="1040" />
+    </state>
+    <state x="1694" y="175" width="1092" height="738" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1607420190019" />
+    <state x="2019" y="295" key="FileChooserDialogImpl" timestamp="1607420186123">
+      <screen x="1280" y="0" width="1920" height="1040" />
+    </state>
+    <state x="2019" y="295" key="FileChooserDialogImpl/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1607420186123" />
+    <state width="1877" height="348" key="GridCell.Tab.0.bottom" timestamp="1607422272011">
+      <screen x="1280" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="348" key="GridCell.Tab.0.bottom/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1607422272011" />
+    <state width="1877" height="348" key="GridCell.Tab.0.center" timestamp="1607422272011">
+      <screen x="1280" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="348" key="GridCell.Tab.0.center/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1607422272011" />
+    <state width="1877" height="348" key="GridCell.Tab.0.left" timestamp="1607422272011">
+      <screen x="1280" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="348" key="GridCell.Tab.0.left/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1607422272011" />
+    <state width="1877" height="348" key="GridCell.Tab.0.right" timestamp="1607422272011">
+      <screen x="1280" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="348" key="GridCell.Tab.0.right/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1607422272011" />
+    <state width="1877" height="348" key="GridCell.Tab.1.bottom" timestamp="1607422272012">
+      <screen x="1280" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="348" key="GridCell.Tab.1.bottom/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1607422272012" />
+    <state width="1877" height="348" key="GridCell.Tab.1.center" timestamp="1607422272012">
+      <screen x="1280" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="348" key="GridCell.Tab.1.center/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1607422272012" />
+    <state width="1877" height="348" key="GridCell.Tab.1.left" timestamp="1607422272012">
+      <screen x="1280" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="348" key="GridCell.Tab.1.left/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1607422272012" />
+    <state width="1877" height="348" key="GridCell.Tab.1.right" timestamp="1607422272012">
+      <screen x="1280" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="348" key="GridCell.Tab.1.right/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1607422272012" />
+    <state x="1741" y="165" key="SettingsEditor" timestamp="1606471553899">
+      <screen x="1280" y="0" width="1920" height="1040" />
+    </state>
+    <state x="1741" y="165" key="SettingsEditor/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1606471553899" />
+    <state x="1792" y="249" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1607420423717">
+      <screen x="1280" y="0" width="1920" height="1040" />
+    </state>
+    <state x="1792" y="249" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1607420423717" />
+    <state x="1947" y="253" width="585" height="534" key="find.popup" timestamp="1607931119611">
+      <screen x="1280" y="0" width="1920" height="1040" />
+    </state>
+    <state x="1947" y="253" width="585" height="534" key="find.popup/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1607931119611" />
+    <state x="1903" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1607483693139">
+      <screen x="1280" y="0" width="1920" height="1040" />
+    </state>
+    <state x="1903" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1607483693139" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/cmd/api/router/rest_api/user.go</url>
+          <line>15</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
