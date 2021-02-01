@@ -10,14 +10,6 @@ import (
 	"regexp"
 )
 
-func (ServiceImpl) RetrieveByID(ID int) (*models.Users, error) {
-	return &models.Users{
-		ID:    1,
-		Name:  "john doe",
-		Email: "john.doe@email.com",
-	}, nil
-}
-
 func (s ServiceImpl) CreateConnectionFriend(friendList models.FriendsList) (*models.Response,error ) {
 	response:=&models.Response{}
 	if len(friendList.Friends) !=2{
@@ -56,6 +48,21 @@ func (s ServiceImpl) CreateConnectionFriend(friendList models.FriendsList) (*mod
 	response.Success=true
 	return response,nil
 }
+
+func (s ServiceImpl)CreateUser(email models.EmailUser) (*models.Response, error)  {
+	response:=&models.Response{}
+	err:=utils.VaditationEmail(email.Email)
+	if err!=nil{
+		return response,err
+	}
+	err=CreateUserByEmail(s.DB, email.Email)
+	if err!=nil{
+		return response, err
+	}
+	response.Success=true
+	return response,nil
+}
+
 
 func (s ServiceImpl) ReceiveFriendListByEmail(email string) (*models.ResponseFriend, error)  {
 	responseFriend:= &models.ResponseFriend{}
@@ -283,6 +290,15 @@ func CheckIsFriendOrBlockInDb(db *sql.DB, userEmail string, friendEmail string) 
 		if relationships[i].StatusUpdate=="BLOCK" || relationships[i].IsFriend==true{
 			return errors.New("They were blocked or had friends")
 		}
+	}
+	return nil
+}
+
+func CreateUserByEmail(db *sql.DB, emailUser string) error {
+	sqlStatement:=`INSERT INTO "User" ("email") VALUES ($1)`
+	_,err:=db.Exec(sqlStatement,emailUser)
+	if err!=nil{
+		return err
 	}
 	return nil
 }

@@ -20,19 +20,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9871398e-da51-43fe-a9bc-9adfa00b7bd2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/cmd/internal/services/mocks/mock_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmd/internal/services/user/retrieve_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cmd/api/router/rest_api/friendship.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cmd/api/router/rest_api/friendship_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/api/router/rest_api/response_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/api/router/rest_api/response_handler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/api/router/rest_api/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/api/router/rest_api/user.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/api/router/rest_api/user_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/api/router/rest_api/user_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/internal/services/models/response_models.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/internal/services/models/response_models.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/api/router/routes.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/api/router/routes.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/internal/services/mocks/mock_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/internal/services/mocks/mock_service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/internal/services/user/init.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/internal/services/user/init.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/internal/services/user/retrieve.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/internal/services/user/retrieve.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/internal/services/utils/helper.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/internal/services/utils/helper.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/modules.txt" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/modules.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/internal/services/user/retrieve_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/internal/services/user/retrieve_test.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

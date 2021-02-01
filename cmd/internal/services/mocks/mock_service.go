@@ -8,16 +8,6 @@ type ServiceMock struct {
 	mock.Mock
 }
 
-func (s ServiceMock) RetrieveByID(req int) (*models.Users, error) {
-	returnVals := s.Called(req)
-	r0 := returnVals.Get(0).(models.Users)
-	var r1 error
-	if returnVals.Get(1) != nil {
-		r1 = returnVals.Get(1).(error)
-	}
-	return &r0, r1
-}
-
 func (s ServiceMock) CreateConnectionFriend(req models.FriendsList) (*models.Response,error) {
 	returnVals := s.Called(req)
 	r0 := returnVals.Get(0).(models.Response)
@@ -27,6 +17,17 @@ func (s ServiceMock) CreateConnectionFriend(req models.FriendsList) (*models.Res
 	}
 	return &r0, r1
 }
+
+func (s ServiceMock) CreateUser(req models.EmailUser) (*models.Response,error) {
+	returnVals := s.Called(req)
+	r0 := returnVals.Get(0).(models.Response)
+	var r1 error
+	if returnVals.Get(1) != nil {
+		r1 = returnVals.Get(1).(error)
+	}
+	return &r0, r1
+}
+
 
 func (s ServiceMock) ReceiveFriendListByEmail(req string) (*models.ResponseFriend,error) {
 	returnVals := s.Called(req)
