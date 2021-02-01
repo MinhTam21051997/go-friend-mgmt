@@ -1,7 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="9871398e-da51-43fe-a9bc-9adfa00b7bd2" name="Default Changelist" comment="" />
+    <list default="true" id="9871398e-da51-43fe-a9bc-9adfa00b7bd2" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/cmd/internal/services/mocks/mock_service.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cmd/internal/services/user/retrieve_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/api/router/rest_api/response_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/api/router/rest_api/response_handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/api/router/rest_api/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/api/router/rest_api/user.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/api/router/rest_api/user_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/api/router/rest_api/user_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/internal/services/models/response_models.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/internal/services/models/response_models.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/internal/services/user/init.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/internal/services/user/init.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/internal/services/user/retrieve.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/internal/services/user/retrieve.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/internal/services/utils/helper.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/internal/services/utils/helper.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/modules.txt" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/modules.txt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -15,6 +47,9 @@
     </option>
   </component>
   <component name="GOROOT" path="C:\Go" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="GoDepProject">
     <integration-enabled>true</integration-enabled>
   </component>
@@ -68,6 +103,18 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
   </component>
@@ -76,10 +123,18 @@
       <screen x="1280" y="0" width="1920" height="1040" />
     </state>
     <state x="2032" y="353" key="#Go_Modules/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1606471398165" />
+    <state x="1866" y="198" key="#Inspections" timestamp="1611052053274">
+      <screen x="1280" y="0" width="1920" height="1040" />
+    </state>
+    <state x="1866" y="198" key="#Inspections/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1611052053274" />
     <state x="1694" y="175" width="1092" height="738" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1607420190019">
       <screen x="1280" y="0" width="1920" height="1040" />
     </state>
     <state x="1694" y="175" width="1092" height="738" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1607420190019" />
+    <state x="2006" y="322" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1611736132504">
+      <screen x="1280" y="0" width="1920" height="1040" />
+    </state>
+    <state x="2006" y="322" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1611736132504" />
     <state x="2019" y="295" key="FileChooserDialogImpl" timestamp="1607420186123">
       <screen x="1280" y="0" width="1920" height="1040" />
     </state>
@@ -124,22 +179,25 @@
       <screen x="1280" y="0" width="1920" height="1040" />
     </state>
     <state x="1792" y="249" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1607420423717" />
-    <state x="1947" y="253" width="585" height="534" key="find.popup" timestamp="1607931119611">
+    <state x="1947" y="253" width="585" height="592" key="find.popup" timestamp="1611913670060">
       <screen x="1280" y="0" width="1920" height="1040" />
     </state>
-    <state x="1947" y="253" width="585" height="534" key="find.popup/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1607931119611" />
-    <state x="1903" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1607483693139">
+    <state x="1947" y="253" width="585" height="592" key="find.popup/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1611913670060" />
+    <state x="2083" y="281" key="refactoring.ChangeSignatureDialog" timestamp="1609321748271">
       <screen x="1280" y="0" width="1920" height="1040" />
     </state>
-    <state x="1903" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1607483693139" />
+    <state x="2083" y="281" key="refactoring.ChangeSignatureDialog/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1609321748271" />
+    <state x="1903" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1611913657731">
+      <screen x="1280" y="0" width="1920" height="1040" />
+    </state>
+    <state x="1903" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1611913657731" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/cmd/api/router/rest_api/user.go</url>
-          <line>15</line>
-          <option name="timeStamp" value="4" />
+          <url>file://$PROJECT_DIR$/cmd/internal/services/utils/helper.go</url>
+          <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

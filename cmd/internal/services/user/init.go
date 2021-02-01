@@ -7,7 +7,7 @@ import (
 
 type Service interface {
 	RetrieveByID(ID int) (*models.Users, error)
-	CreateConnectionFriend(friend models.Friend) (int64,*models.Response )
+	CreateConnectionFriend(friend models.FriendsList) (*models.Response,error )
 	ReceiveFriendListByEmail(email string) (*models.ResponseFriend,error)
 	ReceiveCommonFriendList(friend models.Friend) (*models.ResponseFriend,error)
 	SubscribeUpdateFromEmail(subscribeUser models.SubscribeUser) (*models.Response,error)

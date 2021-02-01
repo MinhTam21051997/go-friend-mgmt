@@ -2,6 +2,8 @@ package user
 
 import (
 	"database/sql"
+	"errors"
+	"fmt"
 	"go-friend-mgmt/cmd/internal/services/models"
 	"go-friend-mgmt/cmd/internal/services/utils"
 	"log"
@@ -16,101 +18,294 @@ func (ServiceImpl) RetrieveByID(ID int) (*models.Users, error) {
 	}, nil
 }
 
-func (s ServiceImpl) CreateConnectionFriend(friend models.Friend) (int64 ,*models.Response ) {
-	//db:= database.ConnectionDB()
-	//defer db.Close()
-
-	var id int64
-
-	if friend.UserEmail=="" && friend.FriendEmail==""{
-		return 0, &models.Response{
-			Success: false,
-			Message: "Please input email!",
-		}
-	}else{
-		isValidUserEmail:=utils.VaditationEmail(friend.UserEmail)
-		isValidFriendEmail:=utils.VaditationEmail(friend.FriendEmail)
-		if isValidUserEmail==false || isValidFriendEmail==false{
-			return 0,&models.Response{
-				Success: false,
-				Message: "Invalid email!",
-			}
-		}else {
-			isCheckUserEmailInDb:=CheckUserExists(s.DB,friend.UserEmail)
-			isCheckFriendEmailInDb:=CheckUserExists(s.DB,friend.FriendEmail)
-			if isCheckUserEmailInDb==false || isCheckFriendEmailInDb==false{
-				return 0,&models.Response{
-					Success: false,
-					Message: "Email does not exist in database!",
-				}
-			}else {
-				isFriend:=CheckIsFriendOrBlock(s.DB,friend.UserEmail,friend.FriendEmail)
-				log.Println("isFriend in create connection friend", isFriend)
-				if isFriend{
-					return 0, &models.Response{
-						Success: false,
-						Message: "They were blocked or were friends !",
-					}
-				}else {
-					userRelationship:= models.UserRelationship{
-						UserEmail: friend.UserEmail,
-						FriendEmail: friend.FriendEmail,
-						IsFriend: true,
-						StatusUpdate: "",
-					}
-					log.Println("userRelationship  " , userRelationship)
-					sqlStatement:=`INSERT INTO "UserRelationship" ("UserEmail","FriendEmail","IsFriend","StatusUpdate") VALUES ($1,$2,$3,$4) RETURNING "RelationshipId"`
-					err:=s.DB.QueryRow(sqlStatement,userRelationship.UserEmail,userRelationship.FriendEmail,userRelationship.IsFriend,userRelationship.StatusUpdate).Scan(&id)
-
-					if err!=nil{
-						log.Println("err " , err.Error())
-						return 0, &models.Response{
-							Success: false,
-							Message: "Create connection friends failed !",
-						}
-					}else {
-						return id,&models.Response{
-							Success: true,
-							Message: "Created connection friends successfully !",
-						}
-					}
-				}
-			}
+func (s ServiceImpl) CreateConnectionFriend(friendList models.FriendsList) (*models.Response,error ) {
+	response:=&models.Response{}
+	if len(friendList.Friends) !=2{
+		return response, errors.New("The request need to input two email")
+	}
+	friend:=models.Friend{
+		UserEmail: friendList.Friends[0],
+		FriendEmail: friendList.Friends[1],
+	}
+	err:=utils.VaditationEmail(friend.UserEmail)
+	if err!=nil{
+		return response, err
+	}
+	err=utils.VaditationEmail(friend.FriendEmail)
+	if err!=nil{
+		return response, err
+	}
+	err=CheckUserExistsInDb(s.DB,friend.UserEmail)
+	if err!=nil{
+		return response,err
+	}
+	err=CheckUserExistsInDb(s.DB,friend.FriendEmail)
+	if err!=nil{
+		return response,err
+	}
+	err=CheckIsFriendOrBlockInDb(s.DB,friend.UserEmail,friend.FriendEmail)
+	if err!=nil{
+		return response,err
+	}else {
+		err:=CreateConnection(s.DB,friend.UserEmail, friend.FriendEmail)
+		if err!=nil{
+			response.Success=false
+			return response, err
 		}
 	}
-
-	return id,&models.Response{
-		Success: false,
-		Message: "Create connection friends failed !",
-	}
+	response.Success=true
+	return response,nil
 }
 
 func (s ServiceImpl) ReceiveFriendListByEmail(email string) (*models.ResponseFriend, error)  {
-	//db:= database.ConnectionDB()
-	//defer db.Close()
+	responseFriend:= &models.ResponseFriend{}
+	err:=utils.VaditationEmail(email)
+	if err!=nil{
+		return responseFriend,err
+	}
+	err=CheckUserExistsInDb(s.DB,email)
+	if err!=nil{
+		return responseFriend, err
+	}
+	res, err:=GetFriendListByEmail(s.DB, email)
+	if err!=nil{
+		return responseFriend, nil
+	}
+	responseFriend.Success=true
+	responseFriend.Friends=res.Friends
+	responseFriend.Count=int64(len(res.Friends))
+	return responseFriend, nil
+}
 
-	responseFriend:= &models.ResponseFriend{
-		Success: false,
-		Friends: nil,
-		Count: 0,
-		Message: "",
+func (s ServiceImpl) ReceiveCommonFriendList(friend models.Friend) (*models.ResponseFriend,error)  {
+	responseFriend:= &models.ResponseFriend{}
+	err:=utils.VaditationEmail(friend.UserEmail)
+	if err!=nil{
+		return responseFriend,err
+	}
+	err=utils.VaditationEmail(friend.FriendEmail)
+	if err!=nil{
+		return responseFriend,err
+	}
+	err=CheckUserExistsInDb(s.DB,friend.UserEmail)
+	if err!=nil{
+		return responseFriend,err
+	}
+	err=CheckUserExistsInDb(s.DB,friend.FriendEmail)
+	if err!=nil{
+		return responseFriend,err
+	}
+	res, err:=GetCommonFriend(s.DB, friend.UserEmail,friend.FriendEmail)
+	if err!=nil{
+		responseFriend.Success=false
+		return responseFriend,nil
+	}
+	responseFriend.Success=true
+	responseFriend.Friends=res.Friends
+	responseFriend.Count=int64(len(res.Friends))
+	return responseFriend, nil
+}
+
+func (s ServiceImpl) SubscribeUpdateFromEmail(subscribeUser models.SubscribeUser) (*models.Response,error)  {
+	response:= &models.Response{}
+	if subscribeUser.Requestor==subscribeUser.Target {
+		return response, errors.New("The two emails cannot be the same!")
+	}
+	err:=utils.VaditationEmail(subscribeUser.Requestor)
+	if err!=nil{
+		return response,err
+	}
+	err=utils.VaditationEmail(subscribeUser.Target)
+	if err!=nil{
+		return response,err
+	}
+	err=CheckUserExistsInDb(s.DB,subscribeUser.Requestor)
+	if err!=nil{
+		return response,err
+	}
+	err=CheckUserExistsInDb(s.DB,subscribeUser.Target)
+	if err!=nil{
+		return response,err
 	}
 
-	if email==""{
-		responseFriend.Message="Email cannot be empty!"
-		return responseFriend,nil
+	res, err:=CheckRelationshipExistsInDb(s.DB,subscribeUser.Requestor, subscribeUser.Target)
+	if err!=nil{
+		log.Println("Error ", err.Error())
+		return response,err
+	}
+	if res < 1{
+		err:=InsertRelationship(s.DB, subscribeUser.Requestor, subscribeUser.Target,"SUBSCRIBE")
+		if  err!=nil{
+			return response, err
+		}
+		response.Success=true
+		return response, nil
+	}
+	err=UpdateRelationship(s.DB, subscribeUser.Requestor, subscribeUser.Target,"SUBSCRIBE")
+	if  err!=nil{
+		return response, err
+	}
+	response.Success=true
+	return response, nil
+}
+
+func (s ServiceImpl) BlockUpdateFromEmail(subscribeUser models.SubscribeUser) (*models.Response,error)  {
+	response:= &models.Response{}
+	if subscribeUser.Requestor==subscribeUser.Target {
+		return response, errors.New("The two emails cannot be the same!")
+	}
+	err:=utils.VaditationEmail(subscribeUser.Requestor)
+	if err!=nil{
+		return response,err
+	}
+	err=utils.VaditationEmail(subscribeUser.Target)
+	if err!=nil{
+		return response,err
+	}
+	err=CheckUserExistsInDb(s.DB,subscribeUser.Requestor)
+	if err!=nil{
+		return response,err
+	}
+	err=CheckUserExistsInDb(s.DB,subscribeUser.Target)
+	if err!=nil{
+		return response,err
+	}
+	res, err:=CheckRelationshipExistsInDb(s.DB,subscribeUser.Requestor, subscribeUser.Target)
+	if err!=nil{
+		log.Println("Error ", err.Error())
+		return response, nil
+	}
+	if res < 1{
+		err:=InsertRelationship(s.DB, subscribeUser.Requestor, subscribeUser.Target,"BLOCK")
+		if  err!=nil{
+			return response, err
+		}
+		response.Success=true
+		return response, nil
+	}
+	err=UpdateRelationship(s.DB, subscribeUser.Requestor, subscribeUser.Target,"BLOCK")
+	if  err!=nil{
+		return response, err
+	}
+	response.Success=true
+	return response, nil
+}
+
+func (s ServiceImpl) GetAllSubscribeUpdateByEmail(retrieve models.RetrieveUpdate) (*models.SubscribeResponse,error)  {
+	subscribeResponse:= &models.SubscribeResponse{}
+	err:=utils.VaditationEmail(retrieve.Sender)
+	if err!=nil{
+		return subscribeResponse,err
+	}
+	err=CheckUserExistsInDb(s.DB,retrieve.Sender)
+	if err!=nil{
+		return subscribeResponse,err
+	}
+	res, err:=GetAllSubscriberByEmail(s.DB, retrieve.Sender, retrieve.Text)
+	if err!=nil{
+		return subscribeResponse,err
+	}
+	subscribeResponse.Success=true
+	subscribeResponse.Recipients=res.Friends
+	return subscribeResponse, nil
+}
+
+func CheckUserExistsInDb(db *sql.DB, email string) error {
+	var count int64
+	err:=utils.VaditationEmail(email)
+	if err!=nil{
+		return err
 	}else {
-		isValidEmail:=utils.VaditationEmail(email)
-		if !isValidEmail{
-			responseFriend.Message="Invalid email!"
-			return responseFriend,nil
+		err = db.QueryRow(`SELECT COUNT(*) FROM "User" WHERE "email" = $1`, email).Scan(&count)
+		if err!=nil{
+			return err
 		}else {
-			isCheckEmailInDb:=CheckUserExists(s.DB,email)
-			if !isCheckEmailInDb{
-				responseFriend.Message="Email does not exist in database!"
-				return responseFriend,nil
-			}else{
-				sqlStatement:=`select u."UserEmail" as Friends
+			if count!=1{
+				return errors.New("Email does not exists")
+			}
+		}
+	}
+	return nil
+}
+
+func CheckRelationshipExistsInDb(db *sql.DB, userEmail string, friendEmail string) (int,error) {
+	var count int
+	err:=utils.VaditationEmail(userEmail)
+	if err!=nil{
+		return count,err
+	}
+	err=utils.VaditationEmail(friendEmail)
+	if err!=nil{
+		return count,err
+	}
+	err=CheckUserExistsInDb(db,userEmail)
+	if err!=nil{
+		return count,err
+	}
+	err=CheckUserExistsInDb(db,friendEmail)
+	if err!=nil{
+		return count,err
+	}
+	err = db.QueryRow(`SELECT COUNT(*) FROM "UserRelationship" WHERE "UserEmail" = $1 and "FriendEmail" = $2`, userEmail, friendEmail).Scan(&count)
+	if err!=nil{
+		return count,err
+	}
+	return count,nil
+}
+
+func CheckIsFriendOrBlockInDb(db *sql.DB, userEmail string, friendEmail string) error {
+	err:=utils.VaditationEmail(userEmail)
+	if err!=nil{
+		return err
+	}
+	err=utils.VaditationEmail(friendEmail)
+	if err!=nil{
+		return err
+	}
+	sqlQuery:=`SELECT * FROM "UserRelationship" WHERE ("UserEmail" = $1 and "FriendEmail" = $2) or ("FriendEmail" = $1 and "UserEmail" = $2)`
+	rows,err := db.Query(sqlQuery, userEmail, friendEmail)
+	if err!=nil{
+		log.Println("[CheckIsFriendOrBlockInDb] query error : ", err.Error())
+		return err
+	}
+	defer rows.Close()
+	var relationships []models.UserRelationship
+	for rows.Next(){
+		var rel models.UserRelationship
+		err := rows.Scan(&rel.RelationshipId,&rel.UserEmail,&rel.FriendEmail,&rel.IsFriend,&rel.StatusUpdate)
+		if err!=nil{
+			log.Fatalf("[CheckIsFriendOrBlock] Cannot scan to UserRelationship model %v ", err.Error() )
+			return err
+		}
+		relationships=append(relationships,rel)
+	}
+	for i:=0;i<len(relationships);i++{
+		if relationships[i].StatusUpdate=="BLOCK" || relationships[i].IsFriend==true{
+			return errors.New("They were blocked or had friends")
+		}
+	}
+	return nil
+}
+
+func CreateConnection(db *sql.DB, emailUser string, friendEmail string) error{
+	var id int
+	userRelationship:= models.UserRelationship{
+		UserEmail: emailUser,
+		FriendEmail: friendEmail,
+		IsFriend: true,
+		StatusUpdate: "",
+	}
+	sqlStatement:=`INSERT INTO "UserRelationship" ("UserEmail","FriendEmail","IsFriend","StatusUpdate") VALUES ($1,$2,$3,$4) RETURNING "RelationshipId"`
+	err:=db.QueryRow(sqlStatement,userRelationship.UserEmail,userRelationship.FriendEmail,userRelationship.IsFriend,userRelationship.StatusUpdate).Scan(&id)
+	if err!=nil{
+		return err
+	}
+	return nil
+}
+
+func GetFriendListByEmail(db *sql.DB, email string) (*models.FriendsList, error) {
+	response:=&models.FriendsList{}
+	sqlStatement:=`select u."UserEmail" as Friends
 								from "UserRelationship" u
 								where (u."UserEmail"=$1 or u."FriendEmail"=$1)
 								and "IsFriend"=true and u."UserEmail" not like $1
@@ -119,61 +314,28 @@ func (s ServiceImpl) ReceiveFriendListByEmail(email string) (*models.ResponseFri
 								from "UserRelationship" r
 								where (r."UserEmail"=$1 or r."FriendEmail"=$1)
 								and "IsFriend"=true and r."FriendEmail" not like $1`
-				rows,err:=s.DB.Query(sqlStatement,email)
-				if err!=nil{
-					log.Println("[ReceiveFriendList]: ", err.Error())
-					responseFriend.Message="Cannot query on table user_relationship"
-					return responseFriend, err
-				}
-				defer rows.Close()
+	rows,err:=db.Query(sqlStatement,email)
+	if err!=nil{
+		return response, err
+	}
+	defer rows.Close()
 
-				for rows.Next(){
-					var emailTemp string
-					err = rows.Scan(&emailTemp)
-					if err!=nil{
-						log.Fatalf("Cannot insert email to slice %v ", err.Error() )
-					}
-					responseFriend.Friends = append(responseFriend.Friends, emailTemp)
-					responseFriend.Success=true
-					responseFriend.Count=responseFriend.Count+1
-					responseFriend.Message="Get receive friends list successfully!"
-				}
-			}
+	for rows.Next(){
+		var emailTemp string
+		err = rows.Scan(&emailTemp)
+		if err!=nil{
+			fmt.Println("email", err)
+			return response, err
 		}
+		response.Friends = append(response.Friends, emailTemp)
 	}
 
-	return responseFriend, nil
+	return response, nil
 }
 
-func (s ServiceImpl) ReceiveCommonFriendList(friend models.Friend) (*models.ResponseFriend,error)  {
-	//db:= database.ConnectionDB()
-
-	//defer db.Close()
-
-	responseFriend:= &models.ResponseFriend{
-		Success: false,
-		Friends: nil,
-		Count: 0,
-		Message: "",
-	}
-
-	if friend.UserEmail=="" && friend.FriendEmail==""{
-		responseFriend.Message="Email cannot be empty!"
-		return responseFriend,nil
-	}else{
-		isValidUserEmail:=utils.VaditationEmail(friend.UserEmail)
-		isValidFriendEmail:=utils.VaditationEmail(friend.FriendEmail)
-		if isValidUserEmail==false || isValidFriendEmail==false{
-			responseFriend.Message="Invalid email!"
-			return responseFriend,nil
-		}else {
-			isCheckUserEmailInDb:=CheckUserExists(s.DB,friend.UserEmail)
-			isCheckFriendEmailInDb:=CheckUserExists(s.DB,friend.FriendEmail)
-			if isCheckUserEmailInDb==false || isCheckFriendEmailInDb==false{
-				responseFriend.Message="Email does not exist in database!"
-				return responseFriend,nil
-			}else {
-				sqlStatement:=`select *
+func GetCommonFriend(db *sql.DB, userEmail string, friendEmail string) (*models.FriendsList,error) {
+	responseFriend:=&models.FriendsList{}
+	sqlStatement:=`select *
 								from (select u."UserEmail"
 								from public."UserRelationship" u
 								where ("UserEmail"=$1 or "FriendEmail"=$1)
@@ -193,214 +355,54 @@ func (s ServiceImpl) ReceiveCommonFriendList(friend models.Friend) (*models.Resp
 								from public."UserRelationship" s
 								where (s."UserEmail"=$2 or s."FriendEmail"=$2)
 								and s."IsFriend"=true and s."FriendEmail" not like $2)`
-				rows,err:=s.DB.Query(sqlStatement,friend.UserEmail,friend.FriendEmail)
-				if err!=nil{
-					log.Println("Cannot query get common friends list :", err.Error())
-					responseFriend.Message="Cannot query get common friends list"
-					return responseFriend, err
-				}else {
-					defer rows.Close()
-					log.Println("rows :", rows)
-					var commonFriendList []string
-					for rows.Next(){
-						var friend string
-						err:=rows.Scan(&friend)
-						if err!=nil{
-							log.Println("Cannot scan to friend", err.Error())
-						}else {
-							commonFriendList=append(commonFriendList,friend)
-						}
-					}
-					log.Println("commonFriendList :", commonFriendList)
-					responseFriend.Success=true
-					responseFriend.Friends=commonFriendList
-					responseFriend.Count=int64(len(commonFriendList))
-					responseFriend.Message="Get common friends list between two email successfully !"
-				}
-			}
-		}
+	rows,err:=db.Query(sqlStatement,userEmail,friendEmail)
+	if err!=nil{
+		return responseFriend, err
 	}
-
+	defer rows.Close()
+	for rows.Next(){
+		var friend string
+		err:=rows.Scan(&friend)
+		if err!=nil{
+			return responseFriend, err
+		}
+		responseFriend.Friends=append(responseFriend.Friends,friend)
+	}
 	return responseFriend, nil
 }
 
-func (s ServiceImpl) SubscribeUpdateFromEmail(subscribeUser models.SubscribeUser) (*models.Response,error)  {
-	//db:= database.ConnectionDB()
-
-	//defer db.Close()
-
-	response:= &models.Response{
-		Success: false,
-		Message: "",
-	}
-
-	if subscribeUser.Requestor=="" && subscribeUser.Target==""{
-		response.Message="Email cannot be empty!"
-		return response,nil
-	}else{
-		if subscribeUser.Requestor==subscribeUser.Target{
-			response.Message="The two emails cannot be the same!"
-			return response,nil
-		}else {
-			isValidUserEmail:=utils.VaditationEmail(subscribeUser.Requestor)
-			isValidFriendEmail:=utils.VaditationEmail(subscribeUser.Target)
-			if isValidUserEmail==false || isValidFriendEmail==false{
-				response.Message="Invalid email!"
-				return response,nil
-			}else {
-				isCheckUserEmailInDb:=CheckUserExists(s.DB,subscribeUser.Requestor)
-				isCheckFriendEmailInDb:=CheckUserExists(s.DB,subscribeUser.Target)
-				if isCheckUserEmailInDb==false || isCheckFriendEmailInDb==false{
-					response.Message="Email does not exist in database!"
-					return response,nil
-				}else {
-					isRelationship:=CheckRelationshipExists(s.DB,subscribeUser.Requestor, subscribeUser.Target)
-					if isRelationship{
-						sqlUpdate:=`UPDATE "UserRelationship"
+func UpdateRelationship(db *sql.DB, requestor string, target string, status string) error {
+	sqlUpdate:=`UPDATE "UserRelationship"
 								SET "StatusUpdate"=$3 
 								WHERE "UserEmail"=$1 and "FriendEmail"=$2`
-						_,err:=s.DB.Exec(sqlUpdate,subscribeUser.Requestor,subscribeUser.Target,"SUBSCRIBE")
-						if err!=nil{
-							log.Println("Cannot subcribe to update ", err.Error())
-							response.Message="Cannot query subscribe to update"
-							return response, err
-						}else {
-							response.Success=true
-							response.Message="Subscribe to updates successfully!"
-							return response, nil
-						}
-					}else {
-						userRelationship:= models.UserRelationship{
-							UserEmail: subscribeUser.Requestor,
-							FriendEmail: subscribeUser.Target,
-							IsFriend: false,
-							StatusUpdate: "SUBSCRIBE",
-						}
-
-						var id int64
-						sqlStatement:=`INSERT INTO "UserRelationship" ("UserEmail","FriendEmail","IsFriend","StatusUpdate") VALUES ($1,$2,$3,$4) RETURNING "RelationshipId"`
-
-						err:=s.DB.QueryRow(sqlStatement,userRelationship.UserEmail,userRelationship.FriendEmail,userRelationship.IsFriend,userRelationship.StatusUpdate).Scan(&id)
-
-						if err!=nil{
-							log.Println("Cannot insert subscribe to updates " , err.Error())
-							response.Message="Cannot insert subscribe to updates"
-							return response,err
-						}else {
-							response.Success=true
-							response.Message="Subscribe to updates successfully!"
-							return response,nil
-						}
-					}
-				}
-			}
-		}
+	_,err:=db.Exec(sqlUpdate,requestor,target,status)
+	if err!=nil{
+		return err
 	}
-
-	return response, nil
+	return nil
 }
 
-func (s ServiceImpl) BlockUpdateFromEmail(subscribeUser models.SubscribeUser) (*models.Response,error)  {
-	//db:= database.ConnectionDB()
-
-	//defer db.Close()
-
-	response:= &models.Response{
-		Success: false,
-		Message: "",
+func InsertRelationship(db *sql.DB, userEmail string, friendEmail string, status string) error {
+	userRelationship:= models.UserRelationship{
+		UserEmail: userEmail,
+		FriendEmail: friendEmail,
+		IsFriend: false,
+		StatusUpdate: status,
 	}
-
-	if subscribeUser.Requestor=="" && subscribeUser.Target==""{
-		response.Message="Email cannot be empty!"
-		return response,nil
-	}else{
-		if subscribeUser.Requestor==subscribeUser.Target{
-			response.Message="The two emails cannot be the same!"
-			return response,nil
-		}else {
-			isValidUserEmail:=utils.VaditationEmail(subscribeUser.Requestor)
-			isValidFriendEmail:=utils.VaditationEmail(subscribeUser.Target)
-			if isValidUserEmail==false || isValidFriendEmail==false{
-				response.Message="Invalid email!"
-				return response,nil
-			}else {
-				isCheckUserEmailInDb:=CheckUserExists(s.DB,subscribeUser.Requestor)
-				isCheckFriendEmailInDb:=CheckUserExists(s.DB,subscribeUser.Target)
-				if isCheckUserEmailInDb==false || isCheckFriendEmailInDb==false{
-					response.Message="Email does not exist in database!"
-					return response,nil
-				}else {
-					isRelationship:=CheckRelationshipExists(s.DB,subscribeUser.Requestor, subscribeUser.Target)
-					if isRelationship{
-						sqlUpdate:=`UPDATE "UserRelationship"
-								SET "StatusUpdate"=$3
-								WHERE "UserEmail"=$1 and "FriendEmail"=$2`
-						_,err:=s.DB.Exec(sqlUpdate,subscribeUser.Requestor,subscribeUser.Target,"BLOCK")
-						if err!=nil{
-							log.Println("Cannot update block to db " , err.Error())
-							response.Success=false
-							response.Message="Block to updates failed!"
-							return response, nil
-						}else {
-							response.Success=true
-							response.Message="Block to updates successfully!"
-							return response, nil
-						}
-
-					}else {
-						userRelationship:= models.UserRelationship{
-							UserEmail: subscribeUser.Requestor,
-							FriendEmail: subscribeUser.Target,
-							IsFriend: false,
-							StatusUpdate: "BLOCK",
-						}
-
-						var id int64
-						sqlStatement:=`INSERT INTO "UserRelationship" ("UserEmail","FriendEmail","IsFriend","StatusUpdate") VALUES ($1,$2,$3,$4) RETURNING "RelationshipId"`
-						err:=s.DB.QueryRow(sqlStatement,userRelationship.UserEmail,userRelationship.FriendEmail,userRelationship.IsFriend,userRelationship.StatusUpdate).Scan(&id)
-
-						if err!=nil{
-							log.Println("Cannot insert block to updates " , err.Error())
-							response.Message="Cannot insert block to updates"
-							return response,err
-						}else {
-							response.Success=true
-							response.Message="Block to updates successfully!"
-							return response,nil
-						}
-					}
-				}
-			}
-		}
+	var id int64
+	sqlStatement:=`INSERT INTO "UserRelationship" ("UserEmail","FriendEmail","IsFriend","StatusUpdate") VALUES ($1,$2,$3,$4) RETURNING "RelationshipId"`
+	err:=db.QueryRow(sqlStatement,userRelationship.UserEmail,userRelationship.FriendEmail,userRelationship.IsFriend,userRelationship.StatusUpdate).Scan(&id)
+	if err!=nil{
+		return err
 	}
-
-	return response, nil
+	return nil
 }
 
-func (s ServiceImpl) GetAllSubscribeUpdateByEmail(retrieve models.RetrieveUpdate) (*models.SubscribeResponse,error)  {
-	subscribeResponse:= &models.SubscribeResponse{
-		Success: false,
-		Recipients: nil,
-		Message: "",
-	}
+func GetAllSubscriberByEmail(db *sql.DB, email string, text string) (*models.FriendsList, error) {
+	subscribeResponse:=&models.FriendsList{}
 	var emailSubscribeList []string
 	var arrExtractEmail []string
-
-	if retrieve.Sender==""{
-		subscribeResponse.Message="Email cannot be empty!"
-		return subscribeResponse,nil
-	}else{
-		isValidSenderEmail:=utils.VaditationEmail(retrieve.Sender)
-		if isValidSenderEmail==false{
-			subscribeResponse.Message="Invalid email!"
-			return subscribeResponse,nil
-		}else {
-			isCheckSenderEmailInDb:=CheckUserExists(s.DB,retrieve.Sender)
-			if isCheckSenderEmailInDb==false{
-				subscribeResponse.Message="Email does not exist in database!"
-				return subscribeResponse,nil
-			}else {
-				sqlStatement:=`select "UserEmail" as Friends
+	sqlStatement:=`select "UserEmail" as Friends
 								from public."UserRelationship" u
 								where (u."IsFriend"=true and u."StatusUpdate"!='BLOCK'
 									   	and (u."UserEmail"=$1 
@@ -422,144 +424,35 @@ func (s ServiceImpl) GetAllSubscribeUpdateByEmail(retrieve models.RetrieveUpdate
 										or u."FriendEmail"=$1)
 										and u."FriendEmail" not like $1)
 										`
-				rows,err:=s.DB.Query(sqlStatement,retrieve.Sender)
-				if err!=nil{
-					log.Println("Cannot query get email subscribe :", err.Error())
-					if retrieve.Text != ""{
-						var subEmail = GetAllEmail(retrieve.Text)
-						log.Println("extractEmail :", subEmail)
-						for i:=0;i<len(subEmail);i++{
-							if CheckUserExists(s.DB,subEmail[i]){
-								arrExtractEmail=append(arrExtractEmail,subEmail[i])
-							}
-						}
-					}
-					emailsSubscribe := removeDuplicates(append([]string{}, append(emailSubscribeList, arrExtractEmail...)...))
-					log.Println("emailsSubscribe :", emailsSubscribe)
-					subscribeResponse.Success=true
-					subscribeResponse.Recipients=emailsSubscribe
-					//subscribeResponse.Message="Cannot query get email subscribe"
-					subscribeResponse.Message="Get list email subscribe by email successfully !"
-					return subscribeResponse, err
-				}else {
-					defer rows.Close()
-					for rows.Next(){
-						var friend string
-						err:=rows.Scan(&friend)
-						if err!=nil{
-							log.Println("Cannot scan to friend", err.Error())
-						}else {
-							emailSubscribeList=append(emailSubscribeList,friend)
-						}
-					}
-					log.Println("Email Subscribe List :", emailSubscribeList)
-					if retrieve.Text != ""{
-						var extractEmail = GetAllEmail(retrieve.Text)
-						log.Println("extractEmail :", extractEmail)
-						for i:=0;i<len(extractEmail);i++{
-							if CheckUserExists(s.DB,extractEmail[i]){
-								arrExtractEmail=append(arrExtractEmail,extractEmail[i])
-							}
-						}
-
-					}
-					emailsSubscribe := removeDuplicates(append([]string{}, append(emailSubscribeList, arrExtractEmail...)...))
-					log.Println("emailsSubscribe :", emailsSubscribe)
-					subscribeResponse.Success=true
-					subscribeResponse.Recipients=emailsSubscribe
-					subscribeResponse.Message="Get list email subscribe by email successfully !"
-				}
-			}
-		}
+	rows,err:=db.Query(sqlStatement,email)
+	if err!=nil{
+		return subscribeResponse, err
 	}
-
-	return subscribeResponse, nil
-}
-
-func CheckUserExists(db *sql.DB, email string) bool {
-	//db:= database.ConnectionDB()
-	//defer db.Close()
-
-	var err error
-	var count int64
-	if email==""{
-		log.Println("Email cannot be empty!")
-		return false
-	}else {
-		err = db.QueryRow(`SELECT COUNT(*) FROM "User" WHERE "email" = $1`, email).Scan(&count)
+	defer rows.Close()
+	for rows.Next(){
+		var friend string
+		err:=rows.Scan(&friend)
 		if err!=nil{
-			log.Println("[CheckExitsEmail] query error : ", err.Error())
-			return false
-		}else {
-			if count==1{
-				return true
-			}
+			log.Println("Cannot scan to friend", err.Error())
+			return subscribeResponse, err
 		}
+		emailSubscribeList=append(emailSubscribeList,friend)
 	}
-	return false
-}
-
-func CheckRelationshipExists(db *sql.DB, userEmail string, friendEmail string) bool {
-	//db:= database.ConnectionDB()
-	//defer db.Close()
-
-	var err error
-	var count int64
-	if userEmail=="" || friendEmail==""{
-		log.Println("Email cannot be empty!")
-		return false
-	}else {
-		err = db.QueryRow(`SELECT COUNT(*) FROM "UserRelationship" WHERE "UserEmail" = $1 and "FriendEmail" = $2`, userEmail, friendEmail).Scan(&count)
-		if err!=nil{
-			log.Println("[CheckRelationshipExists] query error : ", err.Error())
-			return false
-		}else {
-			if count>=1{
-				return true
+	if text != ""{
+		var extractEmail = GetAllEmail(text)
+		for i:=0;i<len(extractEmail);i++{
+			if err:=CheckUserExistsInDb(db,extractEmail[i]); err!=nil{
+				log.Println("Error ", err.Error())
+				//return subscribeResponse, err
+			}else {
+				arrExtractEmail=append(arrExtractEmail,extractEmail[i])
 			}
 		}
+
 	}
-	return false
-}
-
-func CheckIsFriendOrBlock(db *sql.DB, userEmail string, friendEmail string) bool {
-	isFriend:=false
-	if userEmail=="" || friendEmail==""{
-		log.Println("[CheckIsFriendOrBlock] Email cannot be empty!")
-		return false
-	}else {
-		sqlQuery:=`SELECT * FROM "UserRelationship" WHERE ("UserEmail" = $1 and "FriendEmail" = $2) or ("FriendEmail" = $1 and "UserEmail" = $2)`
-		rows,err := db.Query(sqlQuery, userEmail, friendEmail)
-		if err!=nil{
-			log.Println("[CheckIsFriendOrBlock] query error : ", err.Error())
-			isFriend=true
-			return isFriend
-		}
-		defer rows.Close()
-		var relationships []models.UserRelationship
-		for rows.Next(){
-			var rel models.UserRelationship
-			err = rows.Scan(&rel.RelationshipId,&rel.UserEmail,&rel.FriendEmail,&rel.IsFriend,&rel.StatusUpdate)
-			if err!=nil{
-				log.Fatalf("[CheckIsFriendOrBlock] Cannot scan to UserRelationship model %v ", err.Error() )
-			}
-			relationships=append(relationships,rel)
-		}
-
-		log.Println("len(relationships) in create connection friend", len(relationships))
-		if len(relationships)<1{
-			isFriend=false
-			return isFriend
-		}else {
-			for i:=0;i<len(relationships);i++{
-				if relationships[i].StatusUpdate=="BLOCK" || relationships[i].IsFriend==true{
-					isFriend=true
-					return isFriend
-				}
-			}
-		}
-	}
-	return isFriend
+	emailsSubscribe := removeDuplicates(append([]string{}, append(emailSubscribeList, arrExtractEmail...)...))
+	subscribeResponse.Friends=emailsSubscribe
+	return subscribeResponse,nil
 }
 
 func GetAllEmail(text string) []string{
