@@ -20,16 +20,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9871398e-da51-43fe-a9bc-9adfa00b7bd2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/cmd/api/router/rest_api/friendship.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmd/api/router/rest_api/friendship_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cmd/internal/services/user/user_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/migrations/init_database.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/api/router/rest_api/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/api/router/rest_api/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/api/router/rest_api/user_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/api/router/rest_api/user_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/api/router/routes.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/api/router/routes.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/internal/services/mocks/mock_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/internal/services/mocks/mock_service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/internal/services/user/init.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/internal/services/user/init.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/internal/services/user/retrieve.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/internal/services/user/retrieve.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/internal/services/user/retrieve_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/internal/services/user/retrieve_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/api/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/api/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/internal/services/user/create.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/internal/services/user/user.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/internal/services/user/retrieve.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/internal/services/user/friendship.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/internal/services/user/retrieve_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/internal/services/user/friendship_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/internal/services/utils/helper.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/internal/services/utils/helper.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,6 +54,7 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="DatabaseDriversLRU" value="postgresql" />
     <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -124,10 +123,10 @@
       <screen x="1280" y="0" width="1920" height="1040" />
     </state>
     <state x="1866" y="198" key="#Inspections/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1611052053274" />
-    <state x="1694" y="175" width="1092" height="738" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1607420190019">
+    <state x="1694" y="175" width="1092" height="738" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1612253021044">
       <screen x="1280" y="0" width="1920" height="1040" />
     </state>
-    <state x="1694" y="175" width="1092" height="738" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1607420190019" />
+    <state x="1694" y="175" width="1092" height="738" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1612253021044" />
     <state x="2006" y="322" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1611736132504">
       <screen x="1280" y="0" width="1920" height="1040" />
     </state>
@@ -176,10 +175,10 @@
       <screen x="1280" y="0" width="1920" height="1040" />
     </state>
     <state x="1792" y="249" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1607420423717" />
-    <state x="1947" y="253" width="585" height="592" key="find.popup" timestamp="1611913670060">
+    <state x="1947" y="253" width="585" height="592" key="find.popup" timestamp="1612251819417">
       <screen x="1280" y="0" width="1920" height="1040" />
     </state>
-    <state x="1947" y="253" width="585" height="592" key="find.popup/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1611913670060" />
+    <state x="1947" y="253" width="585" height="592" key="find.popup/0.0.1280.984/1280.0.1920.1040@1280.0.1920.1040" timestamp="1612251819417" />
     <state x="2083" y="281" key="refactoring.ChangeSignatureDialog" timestamp="1609321748271">
       <screen x="1280" y="0" width="1920" height="1040" />
     </state>

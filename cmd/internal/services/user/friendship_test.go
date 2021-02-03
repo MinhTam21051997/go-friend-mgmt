@@ -3,10 +3,10 @@ package user
 import (
 	"database/sql"
 	"fmt"
+	_ "github.com/lib/pq"
 	"github.com/stretchr/testify/require"
 	"go-friend-mgmt/cmd/internal/services/models"
 	"testing"
-	_ "github.com/lib/pq"
 )
 
 const (
@@ -22,14 +22,12 @@ func ConnectionDBForTest() *sql.DB {
 		hostTest, portTest, userTest, passwordTest, dbnameTest)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
-		fmt.Println("sssssss")
 		panic(err)
 	}
 	err = db.Ping()
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Successfully connected !")
 	return db
 }
 
@@ -79,43 +77,7 @@ func TestCreateConnectionFriend(t *testing.T)  {
 				Friends: tt.friends,
 			}
 			res, _:=service.CreateConnectionFriend(req)
-			//require.NoError(t, err)
-			require.Equal(t,tt.expectedResponse,res)
-		})
-	}
-}
-
-func TestCreateUser(t *testing.T)  {
-	db:=ConnectionDBForTest()
-	defer db.Close()
-	testCase:=[]struct{
-		name string
-		email string
-		expectedResponse *models.Response
-	}{
-		{
-			name: "success",
-			email: "david@gmail.com",
-			expectedResponse: &models.Response{
-				Success: true,
-			},
-		},
-		{
-			name: "invalid email",
-			email: "davidgmail.com",
-			expectedResponse: &models.Response{
-				Success: false,
-			},
-		},
-	}
-	service:=ServiceImpl{DB: db}
-	for _,tt:=range testCase{
-		t.Run(tt.name, func(t *testing.T){
-			req:=models.EmailUser{
-				Email: tt.email,
-			}
-			res, _:=service.CreateUser(req)
-			//require.NoError(t, err)
+			require.NoError(t, err)
 			require.Equal(t,tt.expectedResponse,res)
 		})
 	}
@@ -413,7 +375,6 @@ func insertConnectionFriend(db *sql.DB) error  {
  					('uresh@gmail.com','kimsong@gmail.com',false ,'BLOCK');`
 	_,err:=db.Exec(sqlStatement)
 	if err!=nil{
-		fmt.Print(err)
 		return err
 	}
 	return nil

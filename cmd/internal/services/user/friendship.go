@@ -3,11 +3,9 @@ package user
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"go-friend-mgmt/cmd/internal/services/models"
 	"go-friend-mgmt/cmd/internal/services/utils"
 	"log"
-	"regexp"
 )
 
 func (s ServiceImpl) CreateConnectionFriend(friendList models.FriendsList) (*models.Response,error ) {
@@ -48,21 +46,6 @@ func (s ServiceImpl) CreateConnectionFriend(friendList models.FriendsList) (*mod
 	response.Success=true
 	return response,nil
 }
-
-func (s ServiceImpl)CreateUser(email models.EmailUser) (*models.Response, error)  {
-	response:=&models.Response{}
-	err:=utils.VaditationEmail(email.Email)
-	if err!=nil{
-		return response,err
-	}
-	err=CreateUserByEmail(s.DB, email.Email)
-	if err!=nil{
-		return response, err
-	}
-	response.Success=true
-	return response,nil
-}
-
 
 func (s ServiceImpl) ReceiveFriendListByEmail(email string) (*models.ResponseFriend, error)  {
 	responseFriend:= &models.ResponseFriend{}
@@ -217,24 +200,6 @@ func (s ServiceImpl) GetAllSubscribeUpdateByEmail(retrieve models.RetrieveUpdate
 	return subscribeResponse, nil
 }
 
-func CheckUserExistsInDb(db *sql.DB, email string) error {
-	var count int64
-	err:=utils.VaditationEmail(email)
-	if err!=nil{
-		return err
-	}else {
-		err = db.QueryRow(`SELECT COUNT(*) FROM "User" WHERE "email" = $1`, email).Scan(&count)
-		if err!=nil{
-			return err
-		}else {
-			if count!=1{
-				return errors.New("Email does not exists")
-			}
-		}
-	}
-	return nil
-}
-
 func CheckRelationshipExistsInDb(db *sql.DB, userEmail string, friendEmail string) (int,error) {
 	var count int
 	err:=utils.VaditationEmail(userEmail)
@@ -294,15 +259,6 @@ func CheckIsFriendOrBlockInDb(db *sql.DB, userEmail string, friendEmail string) 
 	return nil
 }
 
-func CreateUserByEmail(db *sql.DB, emailUser string) error {
-	sqlStatement:=`INSERT INTO "User" ("email") VALUES ($1)`
-	_,err:=db.Exec(sqlStatement,emailUser)
-	if err!=nil{
-		return err
-	}
-	return nil
-}
-
 func CreateConnection(db *sql.DB, emailUser string, friendEmail string) error{
 	var id int
 	userRelationship:= models.UserRelationship{
@@ -340,7 +296,6 @@ func GetFriendListByEmail(db *sql.DB, email string) (*models.FriendsList, error)
 		var emailTemp string
 		err = rows.Scan(&emailTemp)
 		if err!=nil{
-			fmt.Println("email", err)
 			return response, err
 		}
 		response.Friends = append(response.Friends, emailTemp)
@@ -455,7 +410,7 @@ func GetAllSubscriberByEmail(db *sql.DB, email string, text string) (*models.Fri
 		emailSubscribeList=append(emailSubscribeList,friend)
 	}
 	if text != ""{
-		var extractEmail = GetAllEmail(text)
+		var extractEmail = utils.GetAllEmail(text)
 		for i:=0;i<len(extractEmail);i++{
 			if err:=CheckUserExistsInDb(db,extractEmail[i]); err!=nil{
 				log.Println("Error ", err.Error())
@@ -466,25 +421,9 @@ func GetAllSubscriberByEmail(db *sql.DB, email string, text string) (*models.Fri
 		}
 
 	}
-	emailsSubscribe := removeDuplicates(append([]string{}, append(emailSubscribeList, arrExtractEmail...)...))
+	emailsSubscribe := utils.RemoveDuplicates(append([]string{}, append(emailSubscribeList, arrExtractEmail...)...))
 	subscribeResponse.Friends=emailsSubscribe
 	return subscribeResponse,nil
 }
 
-func GetAllEmail(text string) []string{
-	re:=regexp.MustCompile(`[a-zA-Z0-9]+@[a-zA-Z0-9\.]+\.[a-zA-Z0-9]+`)
-	match:=re.FindAllString(text,-1)
-	return match
-}
 
-func removeDuplicates(elements []string) []string{
-	keys := make(map[string]bool)
-	list := []string{}
-	for _, entry := range elements {
-		if _, value := keys[entry]; !value {
-			keys[entry] = true
-			list = append(list, entry)
-		}
-	}
-	return list
-}

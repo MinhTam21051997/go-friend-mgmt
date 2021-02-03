@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"go-friend-mgmt/cmd/api/router"
 	"go-friend-mgmt/cmd/internal/services/database"
 	"go-friend-mgmt/cmd/internal/services/user"
+	"log"
 	"net/http"
 )
 
@@ -19,6 +19,6 @@ func main(){
 
 	err := http.ListenAndServe(":3060", router.InitializeRoutes())
 	if err != nil {
-		fmt.Println("ListenAndServe:", err)
+		log.Println("ListenAndServe:", err)
 	}
 }

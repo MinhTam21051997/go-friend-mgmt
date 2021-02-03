@@ -22,3 +22,21 @@ func VaditationEmail(email string) error {
 
 	return nil
 }
+
+func GetAllEmail(text string) []string{
+	re:=regexp.MustCompile(`[a-zA-Z0-9]+@[a-zA-Z0-9\.]+\.[a-zA-Z0-9]+`)
+	match:=re.FindAllString(text,-1)
+	return match
+}
+
+func RemoveDuplicates(elements []string) []string{
+	keys := make(map[string]bool)
+	list := []string{}
+	for _, entry := range elements {
+		if _, value := keys[entry]; !value {
+			keys[entry] = true
+			list = append(list, entry)
+		}
+	}
+	return list
+}
