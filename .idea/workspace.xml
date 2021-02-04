@@ -20,14 +20,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9871398e-da51-43fe-a9bc-9adfa00b7bd2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/cmd/internal/services/user/user_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/migrations/init_database.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/api/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/api/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/internal/services/user/create.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/internal/services/user/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/internal/services/user/retrieve.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/internal/services/user/friendship.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/internal/services/user/retrieve_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/internal/services/user/friendship_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/internal/services/utils/helper.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/internal/services/utils/helper.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/internal/services/user/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/internal/services/user/user.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/internal/services/user/user_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/internal/services/user/user_test.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

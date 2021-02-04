@@ -13,6 +13,13 @@ func (s ServiceImpl)CreateUser(email models.EmailUser) (*models.Response, error)
 	if err!=nil{
 		return response,err
 	}
+	count, err:=CheckUserExists(s.DB, email.Email)
+	if err!=nil{
+		return  response, err
+	}
+	if count>=1{
+		return response, errors.New("Email already exists in db")
+	}
 	err=CreateUserByEmail(s.DB, email.Email)
 	if err!=nil{
 		return response, err
@@ -28,6 +35,20 @@ func CreateUserByEmail(db *sql.DB, emailUser string) error {
 		return err
 	}
 	return nil
+}
+
+func CheckUserExists(db *sql.DB, email string) (int,error) {
+	var count int
+	err:=utils.VaditationEmail(email)
+	if err!=nil{
+		return count,err
+	}else {
+		err = db.QueryRow(`SELECT COUNT(*) FROM "User" WHERE "email" = $1`, email).Scan(&count)
+		if err!=nil{
+			return count,err
+		}
+	}
+	return count,nil
 }
 
 func CheckUserExistsInDb(db *sql.DB, email string) error {
